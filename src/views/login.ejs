@@ -1,0 +1,52 @@
+<%- include('layout/header', { title: '用户登录',isNarrow: true }) %>
+<% if (locals.isLogin) { %>
+    <p><%= locals.userName %> 您已成功登录，请直接访问<a href="/index">首页</a></p>
+<% } else { %>
+    <h1>登录</h1>
+    <form>
+        <div class="form-group">
+            <label for="input-username"></label><input type="text" class="form-control" id="input-username"
+                                                       placeholder="请输入用户名">
+        </div>
+        <div class="form-group">
+            <label for="input-password"></label><input type="password" class="form-control" id="input-password"
+                                                       placeholder="请输入密码">
+        </div>
+        <button type="submit" class="btn btn-primary" id="btn-submit">登录</button>
+    </form>
+
+    <script>
+
+      $(function () {
+        var $inputUserName = $('#input-username')
+        var $inputPassword = $('#input-password')
+        $('#btn-submit').click(function (e) {
+          // 阻止默认的提交表单行为
+          e.preventDefault()
+          const userName = $inputUserName.val()
+          const password = $inputPassword.val()
+
+          // 提交数据
+          ajax.post('/api/user/login', {
+            userName,
+            password
+          }, function (err, data) {
+            if (err) {
+              alert(err)
+              return
+            }
+            let urlParsed = new URL(location.href);
+            let redirectUrl = urlParsed.searchParams.get('url')
+            // console.log(redirectUrl)
+            // debugger
+            if (redirectUrl) {
+              location.href = redirectUrl
+            } else {
+              location.href = `/index?userName=${userName}`
+            }
+          })
+        })
+      })
+    </script>
+<% } %>
+<%- include('layout/footer') %>
